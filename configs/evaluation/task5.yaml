@@ -1,0 +1,28 @@
+task_id: task5
+name: Interaction Dynamics
+metric: primitive_accuracy_0_to_100
+video_roles:
+  - candidate
+sample_count: 12
+sampling_protocol: uniform_physical_time_full_reference_horizon
+vision_input: ordered_images
+oracle_filter: false
+integrity_threshold: 4
+primitives:
+  - push
+  - rotate
+  - slide_drag
+  - pull
+  - tap
+  - shake
+  - drop
+  - knock_over
+primitive_descriptions:
+  push: {}
+  rotate: {}
+  slide_drag: {}
+  pull: {}
+  tap: {}
+  shake: {}
+  drop: {}
+  knock_over: {}

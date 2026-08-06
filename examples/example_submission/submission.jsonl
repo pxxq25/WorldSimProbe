@@ -1,0 +1,5 @@
+{"model_id": "example-model", "sample_id": "example-task1", "schema_version": "1.0", "task_id": "task1", "videos": {"large": "videos/example-task1__large.mp4", "original": "videos/example-task1__original.mp4", "small": "videos/example-task1__small.mp4"}}
+{"model_id": "example-model", "sample_id": "example-task2", "schema_version": "1.0", "task_id": "task2", "videos": {"candidate": "videos/example-task2.mp4"}}
+{"model_id": "example-model", "sample_id": "example-task3", "schema_version": "1.0", "task_id": "task3", "videos": {"candidate": "videos/example-task3.mp4"}}
+{"model_id": "example-model", "sample_id": "example-task4", "schema_version": "1.0", "task_id": "task4", "videos": {"candidate": "videos/example-task4.mp4"}}
+{"model_id": "example-model", "sample_id": "example-task5", "schema_version": "1.0", "task_id": "task5", "videos": {"candidate": "videos/example-task5.mp4"}}

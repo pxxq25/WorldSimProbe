@@ -1,0 +1,20 @@
+task_id: task4
+name: Interaction Grounding
+official_subsets:
+  - distractor_hallucination
+  - fake_contact_hallucination
+  - proximity_hallucination
+metric: no_contact_displacement_accuracy
+video_roles:
+  - candidate
+tracker: TAPNext++
+time_alignment: full_reference_horizon_nearest_frame
+point_radius_px: 10
+point_grid: 3
+canonical_resolution: [256, 256]
+object_displacement_threshold_px: 10.0
+robot_motion_gate_threshold_px: 60.0
+robot_motion_gate_frames: 3
+robot_motion_gate: robotseg_centroid
+visibility_threshold: 0.5
+score_direction: higher_is_better

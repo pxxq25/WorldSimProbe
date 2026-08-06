@@ -1,0 +1,26 @@
+sample_id,task_id,label,metric,score_0_to_100
+maniskill_task1_01,task1,PegInsertionSide-v1,oracle_ratio_score,94.5257
+maniskill_task1_02,task1,PlugCharger-v1,oracle_ratio_score,82.7651
+maniskill_task1_03,task1,PickCube-v1,oracle_ratio_score,60.8188
+maniskill_task1_04,task1,PullCubeTool-v1,oracle_ratio_score,72.7518
+maniskill_task1_05,task1,PushCube-v1,oracle_ratio_score,69.2210
+maniskill_task2_01,task2,StackPyramid-v1,mean_window_gt_robot_flow_score_0_to_100,79.3865
+maniskill_task2_02,task2,PushCube-v1,mean_window_gt_robot_flow_score_0_to_100,73.4355
+maniskill_task2_03,task2,LiftPegUpright-v1,mean_window_gt_robot_flow_score_0_to_100,84.8010
+maniskill_task2_04,task2,PullCube-v1,mean_window_gt_robot_flow_score_0_to_100,75.1956
+maniskill_task2_05,task2,PegInsertionSide-v1,mean_window_gt_robot_flow_score_0_to_100,83.0456
+maniskill_task3_01,task3,gt / PickCube-v1,mean_window_gt_robot_flow_score_0_to_100,84.2039
+maniskill_task3_02,task3,pi05_step_000600 / PushCube-v1,mean_window_gt_robot_flow_score_0_to_100,84.0586
+maniskill_task3_03,task3,pi05_step_005000 / StackCube-v1,mean_window_gt_robot_flow_score_0_to_100,82.5947
+maniskill_task3_04,task3,1 / PickCube-v1,mean_window_gt_robot_flow_score_0_to_100,65.6919
+maniskill_task3_05,task3,4 / PushCube-v1,mean_window_gt_robot_flow_score_0_to_100,78.7719
+maniskill_task4_01,task4,distractor_hallucination / PickCube-v1,task4_subset_score,0.0000
+maniskill_task4_02,task4,fake_contact_hallucination / PickCube-v1,task4_subset_score,0.0000
+maniskill_task4_03,task4,proximity_hallucination / PickCube-v1,task4_subset_score,0.0000
+maniskill_task4_04,task4,distractor_hallucination / PushCube-v1,task4_subset_score,100.0000
+maniskill_task4_05,task4,fake_contact_hallucination / PickCube-v1,task4_subset_score,0.0000
+maniskill_task5_01,task5,push / PullCube-v1,computed_pass,100.0000
+maniskill_task5_02,task5,pull / PickCube-v1,computed_pass,100.0000
+maniskill_task5_03,task5,rotate / LiftPegUpright-v1,computed_pass,0.0000
+maniskill_task5_04,task5,shake / PlaceSphere-v1,computed_pass,0.0000
+maniskill_task5_05,task5,drop / PickCube-v1,computed_pass,0.0000

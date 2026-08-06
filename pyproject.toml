@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldsimprobe"
+version = "0.1.0"
+description = "Video evaluation toolkit for action-conditioned world models"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "WorldSimProbe Contributors"}]
+dependencies = [
+  "imageio>=2.31",
+  "imageio-ffmpeg>=0.4",
+  "jsonschema>=4.0",
+  "numpy>=1.23",
+  "pillow>=10.0",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+flow = [
+  "h5py>=3.8",
+  "opencv-python>=4.8",
+  "torch>=2.1",
+]
+task4 = [
+  "h5py>=3.8",
+  "opencv-python>=4.8",
+  "torch>=2.1",
+]
+task5 = [
+  "qwen-vl-utils>=0.0.14",
+  "torch>=2.1",
+  "transformers>=4.57",
+]
+teleoperation = [
+  "h5py>=3.8",
+  "opencv-python>=4.8",
+  "transforms3d>=0.4",
+]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.6",
+]
+
+[project.scripts]
+worldsimprobe = "worldsimprobe.cli:main"
+worldsimprobe-task3-operator = "worldsimprobe.evaluation.task3_action_coverage.teleoperation.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+worldsimprobe = [
+  "configs/*.yaml",
+  "schemas/*.json",
+  "evaluation/task3_action_coverage/teleoperation/static/*.html",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+ignore = [
+  "BLE001",
+  "RUF007",
+  "RUF046",
+  "S112",
+  "TRY004",
+]

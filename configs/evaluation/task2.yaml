@@ -1,0 +1,12 @@
+task_id: task2
+name: Global Trajectory Coverage
+metric: robotseg_masked_source_reference_windowed_flow
+video_roles:
+  - candidate
+flow_model: dpflow
+eval_fps: 5.0
+motion_threshold: 0.25
+motion_floor: 3.16
+window_sec: 2.0
+window_stride_sec: 1.0
+score_direction: higher_is_better

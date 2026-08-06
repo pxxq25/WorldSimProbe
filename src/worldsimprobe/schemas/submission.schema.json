@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:worldsimprobe:schema:submission:1.0",
+  "title": "WorldSimProbe submission row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sample_id", "task_id", "model_id", "videos"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "sample_id": {"type": "string", "minLength": 1},
+    "task_id": {"enum": ["task1", "task2", "task3", "task4", "task5"]},
+    "model_id": {"type": "string", "minLength": 1},
+    "videos": {"$ref": "#/$defs/videos"},
+    "metadata": {"type": "object"}
+  },
+  "$defs": {
+    "videos": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 3,
+      "propertyNames": {
+        "enum": ["original", "small", "large", "candidate"]
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[^/].*\\.mp4$"
+      }
+    }
+  }
+}

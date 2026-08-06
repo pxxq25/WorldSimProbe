@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WorldSimProbe Task 3 Operator</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --surface-2: #eef1f5;
+      --ink: #16191f;
+      --muted: #56606d;
+      --line: #d7dde5;
+      --accent: #1267d8;
+      --accent-2: #0f8f65;
+      --danger: #bd2d2d;
+      --warn: #8a5a00;
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      min-height: 34px;
+      border-radius: 7px;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: #aab5c2;
+      background: #f9fafb;
+    }
+
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent);
+      outline-offset: 2px;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    button.danger {
+      color: var(--danger);
+    }
+
+    input, select {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      min-height: 34px;
+      padding: 0 10px;
+      background: #fff;
+      color: var(--ink);
+      width: 100%;
+    }
+
+    select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #5b6572 50%), linear-gradient(135deg, #5b6572 50%, transparent 50%);
+      background-position: calc(100% - 15px) 14px, calc(100% - 10px) 14px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 28px;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 650;
+      line-height: 1.2;
+    }
+
+    .subtle {
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .pill.good {
+      color: #075f42;
+      background: #dff5ec;
+    }
+
+    .pill.busy {
+      color: #174f9f;
+      background: #e2edff;
+    }
+
+    .pill.bad {
+      color: #8f1d1d;
+      background: #ffe5e5;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(720px, 1fr) 390px;
+      gap: 14px;
+      padding: 14px;
+      align-items: start;
+      align-content: start;
+      min-height: 0;
+    }
+
+    .view-stack {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      gap: 14px;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .viewer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .viewer {
+      background: #0d1117;
+      border: 1px solid #1d2633;
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      aspect-ratio: 4 / 3;
+      min-height: 320px;
+    }
+
+    .viewer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      height: 38px;
+      padding: 0 10px;
+      color: #d7dde5;
+      border-bottom: 1px solid #1d2633;
+      background: #111720;
+      font-size: 13px;
+    }
+
+    .frame-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      background: #07090d;
+    }
+
+    .frame-wrap img,
+    .frame-wrap video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #07090d;
+    }
+
+    .empty-frame {
+      color: #b6c0ce;
+      text-align: center;
+      max-width: 32ch;
+      line-height: 1.45;
+      padding: 20px;
+    }
+
+    .lower-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .telemetry-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .compact-table {
+      overflow: auto;
+      max-height: 190px;
+      border-top: 1px solid var(--line);
+    }
+
+    .compact-table td:last-child {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      min-width: 0;
+    }
+
+    .panel h2 {
+      margin: 0;
+      padding: 12px 12px 8px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .panel-body {
+      padding: 0 12px 12px;
+    }
+
+    .command-grid {
+      display: grid;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .move-grid,
+    .rotate-grid {
+      grid-template-columns: repeat(3, minmax(58px, 1fr));
+    }
+
+    .grip-grid {
+      grid-template-columns: repeat(2, minmax(58px, 1fr));
+    }
+
+    .control-groups {
+      display: grid;
+      gap: 12px;
+    }
+
+    .control-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .control-title {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .active-arm-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .arm-toggle.active {
+      border-color: var(--accent);
+      background: #e7f0ff;
+      color: #0d4b9f;
+      font-weight: 650;
+    }
+
+    .command-grid button {
+      min-height: 40px;
+      padding: 5px 7px;
+      display: grid;
+      gap: 2px;
+      justify-items: center;
+      align-content: center;
+      line-height: 1.1;
+    }
+
+    .command-grid kbd {
+      font: inherit;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .command-grid small {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .command-grid button.active {
+      border-color: var(--accent);
+      background: #e7f0ff;
+      color: #0d4b9f;
+    }
+
+    .command-grid button.active small {
+      color: #0d4b9f;
+    }
+
+    .side {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      gap: 14px;
+      align-self: start;
+      min-height: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 82px;
+      gap: 8px;
+    }
+
+    .scene-grid {
+      display: grid;
+      grid-template-columns: 1fr 96px 76px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .session-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: end;
+    }
+
+    .session-main {
+      min-width: 0;
+    }
+
+    .session-layout .actions {
+      justify-content: flex-end;
+    }
+
+    .field {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .field > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .scene-meta {
+      display: grid;
+      gap: 4px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .scene-meta strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 6px 10px;
+      font-size: 13px;
+    }
+
+    .kv dt {
+      color: var(--muted);
+    }
+
+    .kv dd {
+      margin: 0;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .trace {
+      overflow: auto;
+      min-height: 160px;
+      max-height: 34vh;
+      border-top: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    pre {
+      margin: 0;
+      padding: 10px;
+      max-height: 170px;
+      overflow: auto;
+      background: #10151d;
+      color: #e7edf7;
+      border-radius: 7px;
+      font-size: 12px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    @media (max-width: 1100px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .side {
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.7fr);
+        grid-template-rows: auto auto;
+      }
+      .side .controls-panel {
+        grid-row: 1 / span 2;
+      }
+      .session-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .session-layout .actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      header {
+        height: auto;
+        align-items: flex-start;
+        padding: 12px;
+        flex-direction: column;
+      }
+      header > div,
+      main,
+      .view-stack,
+      .viewer-grid,
+      .lower-row,
+      .telemetry-row,
+      .side,
+      .session-layout {
+        min-width: 0;
+        max-width: 100%;
+      }
+      main, .viewer-grid, .lower-row, .telemetry-row, .side, .session-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .side .controls-panel {
+        grid-row: auto;
+      }
+      .viewer {
+        aspect-ratio: 4 / 3;
+        min-height: 0;
+      }
+      .session-layout .actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>WorldSimProbe Task 3 Operator</h1>
+        <div class="subtle">Imitate the original episode trajectory while recording a 14D teleop trace</div>
+      </div>
+      <div class="status-row">
+        <span id="simStatus" class="pill">sim connecting</span>
+        <span id="referenceStatus" class="pill">reference waiting</span>
+        <span id="frameStatus" class="pill">0 frames</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="view-stack">
+        <div class="viewer-grid">
+          <section class="viewer" aria-label="RoboTwin simulator output">
+            <div class="viewer-head">
+              <strong>RoboTwin output</strong>
+              <span id="simFrameLabel">waiting</span>
+            </div>
+            <div class="frame-wrap">
+              <img id="simFrame" alt="RoboTwin live frame" hidden>
+              <div id="simEmpty" class="empty-frame">Initializing RoboTwin session. The first frame will stay visible once loaded.</div>
+            </div>
+          </section>
+
+          <section class="viewer" aria-label="Original episode reference">
+            <div class="viewer-head">
+              <strong>Original episode</strong>
+              <span id="referenceFrameLabel">waiting</span>
+            </div>
+            <div class="frame-wrap">
+              <video id="referenceVideo" controls muted playsinline preload="metadata" hidden></video>
+              <div id="referenceEmpty" class="empty-frame">Select a task and episode to load the original trajectory video.</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="telemetry-row">
+          <section class="panel">
+            <h2>Robot Position</h2>
+            <div class="compact-table">
+              <table>
+                <tbody id="robotTelemetryRows">
+                  <tr><td colspan="3">No robot telemetry yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Object Position</h2>
+            <div class="compact-table">
+              <table>
+                <tbody id="objectTelemetryRows">
+                  <tr><td colspan="3">No object telemetry yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <div class="lower-row">
+          <section class="panel">
+            <h2>Session</h2>
+            <div class="panel-body session-layout">
+              <div class="session-main">
+                <div class="scene-grid">
+                  <label class="field">
+                    <span>Task</span>
+                    <select id="taskSelect" aria-label="Task"></select>
+                  </label>
+                  <label class="field">
+                    <span>Episode</span>
+                    <select id="episodeSelect" aria-label="Episode"></select>
+                  </label>
+                  <label class="field">
+                    <span>Frame</span>
+                    <input id="frameId" value="0" aria-label="Frame id">
+                  </label>
+                </div>
+                <div class="scene-meta">
+                  <div><strong id="episodeId">stack_blocks_three__000000</strong></div>
+                  <div id="sceneInstruction">Loading scene list.</div>
+                </div>
+              </div>
+              <div class="actions">
+                <button id="startBtn" class="primary">Start</button>
+                <button id="resetBtn">Reset</button>
+                <button id="evalBtn">Evaluate</button>
+                <button id="exportBtn">Export</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Current Action</h2>
+            <div class="panel-body">
+              <pre id="actionPreview">No action yet.</pre>
+            </div>
+          </section>
+        </div>
+
+      </section>
+
+      <aside class="side">
+        <section class="panel controls-panel">
+          <h2>Controls</h2>
+          <div class="panel-body">
+            <div class="control-groups" id="commandGrid">
+              <div class="control-group" aria-label="Active arm selector">
+                <div class="control-title">Active arm</div>
+                <div class="active-arm-row">
+                  <button class="arm-toggle active" data-arm-toggle="left">Left arm <kbd>1</kbd></button>
+                  <button class="arm-toggle" data-arm-toggle="right">Right arm <kbd>2</kbd></button>
+                </div>
+              </div>
+              <div class="control-group" aria-label="EEF translation controls">
+                <div class="control-title">Move · table frame</div>
+                <div class="command-grid move-grid">
+                  <button data-command="lift"><kbd>Q</kbd><small>Up Z</small></button>
+                  <button data-command="up"><kbd>W</kbd><small>Forward</small></button>
+                  <button data-command="delift"><kbd>E</kbd><small>Down Z</small></button>
+                  <button data-command="left"><kbd>A</kbd><small>Left X</small></button>
+                  <button data-command="down"><kbd>S</kbd><small>Back</small></button>
+                  <button data-command="right"><kbd>D</kbd><small>Right X</small></button>
+                </div>
+              </div>
+              <div class="control-group" aria-label="EEF rotation controls">
+                <div class="control-title">Rotate</div>
+                <div class="command-grid rotate-grid">
+                  <button data-command="roll_neg"><kbd>U</kbd><small>Roll -</small></button>
+                  <button data-command="pitch_pos"><kbd>I</kbd><small>Pitch +</small></button>
+                  <button data-command="roll_pos"><kbd>O</kbd><small>Roll +</small></button>
+                  <button data-command="yaw_neg"><kbd>J</kbd><small>Yaw -</small></button>
+                  <button data-command="pitch_neg"><kbd>K</kbd><small>Pitch -</small></button>
+                  <button data-command="yaw_pos"><kbd>L</kbd><small>Yaw +</small></button>
+                </div>
+              </div>
+              <div class="control-group" aria-label="Gripper controls">
+                <div class="control-title">Gripper</div>
+                <div class="command-grid grip-grid">
+                  <button data-command="close"><kbd>Z</kbd><small>Close</small></button>
+                  <button data-command="open"><kbd>X</kbd><small>Open</small></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Status</h2>
+          <div class="panel-body">
+            <dl class="kv">
+              <dt>Episode</dt><dd id="episodeOut">-</dd>
+              <dt>Frame</dt><dd id="frameOut">-</dd>
+              <dt>Commands</dt><dd id="commandCount">0</dd>
+              <dt>Active arm</dt><dd id="activeArmOut">left</dd>
+              <dt>Active</dt><dd id="activeCommand">-</dd>
+            </dl>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Contract</h2>
+          <div class="panel-body">
+            <pre id="evalOut">No evaluation yet.</pre>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      sim: null,
+      simFrames: 0,
+      simUrl: null,
+      activeCommand: null,
+      activeArm: "left",
+      started: false,
+      clientSessionId: null,
+      requestedEpisodeId: null,
+      streamEpisodeId: null,
+      scenes: null,
+      referenceSrc: null,
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const commandButtons = [...document.querySelectorAll("[data-command]")];
+    const armToggleButtons = [...document.querySelectorAll("[data-arm-toggle]")];
+
+    function sceneTasks() {
+      return state.scenes && Array.isArray(state.scenes.tasks) ? state.scenes.tasks : [];
+    }
+
+    function selectedTaskData() {
+      return sceneTasks().find((row) => row.task === $("taskSelect").value) || sceneTasks()[0] || null;
+    }
+
+    function selectedEpisodeData() {
+      const task = selectedTaskData();
+      if (!task) return null;
+      const selected = Number($("episodeSelect").value);
+      return task.episodes.find((row) => Number(row.episode) === selected) || task.episodes[0] || null;
+    }
+
+    function selectedEpisodeId() {
+      const episode = selectedEpisodeData();
+      return episode ? episode.episode_id : null;
+    }
+
+    function isCurrentSessionMessage(data) {
+      if (data.client_session_id && state.clientSessionId && data.client_session_id !== state.clientSessionId) return false;
+      if (data.episode_id && state.requestedEpisodeId && data.episode_id !== state.requestedEpisodeId) return false;
+      return true;
+    }
+
+    function setPill(el, text, tone) {
+      el.textContent = text;
+      el.className = "pill" + (tone ? " " + tone : "");
+    }
+
+    function wsUrl(path) {
+      const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+      return `${protocol}//${location.host}${path}`;
+    }
+
+    function send(ws, payload) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(payload));
+      }
+    }
+
+    function showFrame(img, empty, urlKey, blob) {
+      if (state[urlKey]) URL.revokeObjectURL(state[urlKey]);
+      state[urlKey] = URL.createObjectURL(blob);
+      img.src = state[urlKey];
+      img.hidden = false;
+      empty.hidden = true;
+    }
+
+    function clearFrames() {
+      if (state.simUrl) URL.revokeObjectURL(state.simUrl);
+      state.simUrl = null;
+      $("simFrame").hidden = true;
+      $("simEmpty").hidden = false;
+      $("simFrameLabel").textContent = "waiting";
+      state.simFrames = 0;
+    }
+
+    function formatNumber(value) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num.toFixed(4).replace(/0+$/, "").replace(/\.$/, "") : "-";
+    }
+
+    function formatVec(value) {
+      if (!Array.isArray(value) || !value.length) return "-";
+      return `[${value.map(formatNumber).join(", ")}]`;
+    }
+
+    function setTableRows(id, rows, emptyText) {
+      const tbody = $(id);
+      tbody.textContent = "";
+      if (!rows.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 3;
+        td.textContent = emptyText;
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+      for (const row of rows) {
+        const tr = document.createElement("tr");
+        for (const cell of row) {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+    }
+
+    function renderTelemetry(telemetry) {
+      const robot = telemetry && telemetry.robot ? telemetry.robot : {};
+      const robotRows = [];
+      for (const arm of ["left", "right"]) {
+        const data = robot[arm] || {};
+        robotRows.push([arm, "tcp xyz", formatVec(data.tcp_xyz)]);
+        robotRows.push([arm, "tcp quat", formatVec(data.tcp_quat)]);
+        robotRows.push([arm, "screen uv", formatVec(data.screen_uv)]);
+        robotRows.push([arm, "gripper", formatNumber(data.gripper)]);
+        robotRows.push([arm, "qpos", formatVec(data.qpos)]);
+      }
+      setTableRows("robotTelemetryRows", robotRows, "No robot telemetry yet.");
+
+      const objectRows = [];
+      for (const obj of (telemetry && telemetry.objects) || []) {
+        const name = obj.name && obj.name !== obj.role ? `${obj.role} (${obj.name})` : obj.role;
+        objectRows.push([name, "xyz", formatVec(obj.xyz)]);
+        objectRows.push([name, "quat", formatVec(obj.quat)]);
+        if (obj.qpos) objectRows.push([name, "qpos", formatVec(obj.qpos)]);
+        if (obj.qlimits) objectRows.push([name, "qlimits", JSON.stringify(obj.qlimits)]);
+      }
+      setTableRows("objectTelemetryRows", objectRows, "No object telemetry yet.");
+    }
+
+    function clearTelemetry() {
+      setTableRows("robotTelemetryRows", [], "Waiting for robot telemetry.");
+      setTableRows("objectTelemetryRows", [], "Waiting for object telemetry.");
+    }
+
+    function referenceTiming(item) {
+      const downSample = Number(state.scenes && state.scenes.down_sample ? state.scenes.down_sample : 3);
+      const fps = Number(item && item.reference_fps ? item.reference_fps : 30);
+      const frame = Math.max(0, Number($("frameId").value || 0) * downSample);
+      return {frame, fps, time: fps > 0 ? frame / fps : 0};
+    }
+
+    function seekReferenceToFrame() {
+      const item = selectedEpisodeData();
+      const video = $("referenceVideo");
+      if (!item || !video.src) return;
+      const timing = referenceTiming(item);
+      const target = Number.isFinite(video.duration) && video.duration > 0 ? Math.min(timing.time, video.duration) : timing.time;
+      try {
+        video.currentTime = target;
+      } catch (_) {
+        return;
+      }
+      $("referenceFrameLabel").textContent = `frame ${timing.frame} / ${formatNumber(timing.time)}s`;
+    }
+
+    function updateReferenceVideo() {
+      const item = selectedEpisodeData();
+      const video = $("referenceVideo");
+      if (!item || !item.reference_video_url) {
+        video.hidden = true;
+        $("referenceEmpty").hidden = false;
+        $("referenceFrameLabel").textContent = "waiting";
+        setPill($("referenceStatus"), "reference missing", "bad");
+        return;
+      }
+      if (state.referenceSrc !== item.reference_video_url) {
+        state.referenceSrc = item.reference_video_url;
+        video.src = item.reference_video_url;
+        video.load();
+      }
+      video.hidden = false;
+      $("referenceEmpty").hidden = true;
+      const frameCount = item.reference_frame_count || item.action_count || "?";
+      setPill($("referenceStatus"), "reference loaded", "good");
+      $("referenceFrameLabel").textContent = `${frameCount} frames`;
+      video.onloadedmetadata = seekReferenceToFrame;
+      video.onerror = () => setPill($("referenceStatus"), "reference error", "bad");
+      seekReferenceToFrame();
+    }
+
+    function updateStatus(data) {
+      if (!isCurrentSessionMessage(data)) return;
+      if (data.state === "initializing" && data.episode_id) {
+        state.streamEpisodeId = data.episode_id;
+      }
+      if (data.state === "ready" && data.episode_id) {
+        state.streamEpisodeId = data.episode_id;
+      }
+      if (data.state) {
+        const tone = data.state === "running" || data.state === "initializing" ? "busy" : data.state === "error" ? "bad" : "good";
+        setPill($("simStatus"), `sim ${data.state}`, tone);
+      }
+      if (data.episode_id) $("episodeOut").textContent = data.episode_id;
+      if (data.frame_id !== undefined) $("frameOut").textContent = data.frame_id;
+      if (data.command_count !== undefined) $("commandCount").textContent = data.command_count;
+      if (data.active_arm) setActiveArm(data.active_arm, false);
+      if (data.active_command) $("activeCommand").textContent = data.active_command;
+      if (data.trace && $("tracePath")) $("tracePath").innerHTML = linkFor(data.trace);
+      if (data.video && $("videoPath")) $("videoPath").innerHTML = linkFor(data.video);
+      if (data.frames !== undefined) setPill($("frameStatus"), `${data.frames} frames`, "");
+      if (data.telemetry) renderTelemetry(data.telemetry);
+    }
+
+    function linkFor(path) {
+      if (!path || path === "-") return "-";
+      const href = `/artifact?path=${encodeURIComponent(path)}`;
+      const name = path.split("/").slice(-1)[0];
+      return `<a href="${href}" target="_blank" rel="noreferrer">${name}</a>`;
+    }
+
+    function addTraceRow(data) {
+      const tr = document.createElement("tr");
+      const delta = data.world_delta
+        ? data.world_delta.map((v) => Number(v).toFixed(4)).join(", ")
+        : data.uv_delta
+          ? data.uv_delta.map((v) => Number(v).toFixed(1)).join(", ")
+          : data.z_delta !== undefined
+            ? Number(data.z_delta).toFixed(4)
+            : "-";
+      tr.innerHTML = `<td>${data.step}</td><td>${data.command}</td><td>${data.direction_ok === undefined || data.direction_ok === null ? "-" : data.direction_ok}</td><td>${delta}</td>`;
+      if ($("traceRows")) $("traceRows").appendChild(tr);
+      $("actionPreview").textContent = JSON.stringify({
+        arm: data.arm,
+        command: data.command,
+        eef_delta_type: data.eef_delta_type,
+        translation_frame: data.translation_frame,
+        planner: data.planner,
+        world_delta: data.world_delta,
+        primary_world_delta: data.primary_world_delta,
+        off_axis_world_delta: data.off_axis_world_delta,
+        primary_px: data.primary_px,
+        off_axis_px: data.off_axis_px,
+        z_delta: data.z_delta,
+        orientation_delta: data.orientation_delta,
+        angle_delta_deg: data.angle_delta_deg,
+        action_14d: data.action_14d,
+      }, null, 2);
+      if (data.telemetry) renderTelemetry(data.telemetry);
+    }
+
+    function handleJson(data) {
+      if (data.type === "status") updateStatus(data);
+      if (data.type === "trace_update") addTraceRow(data);
+      if (data.type === "eval_result") {
+        $("evalOut").textContent = JSON.stringify(data.result ? data.result.summary : data, null, 2);
+      }
+      if (data.type === "artifact") {
+        if (data.trace && $("tracePath")) $("tracePath").innerHTML = linkFor(data.trace);
+        if (data.video && $("videoPath")) $("videoPath").innerHTML = linkFor(data.video);
+      }
+      if (data.type === "error") {
+        setPill($("simStatus"), "sim error", "bad");
+        $("evalOut").textContent = data.message || "Unknown error";
+      }
+    }
+
+    function connectSim() {
+      state.sim = new WebSocket(wsUrl("/ws"));
+      state.sim.binaryType = "blob";
+      state.sim.onopen = () => {
+        setPill($("simStatus"), "sim connected", "good");
+        startSession();
+      };
+      state.sim.onclose = () => setPill($("simStatus"), "sim closed", "bad");
+      state.sim.onerror = () => setPill($("simStatus"), "sim error", "bad");
+      state.sim.onmessage = (event) => {
+        if (event.data instanceof Blob) {
+          if (!state.requestedEpisodeId || state.streamEpisodeId !== state.requestedEpisodeId) return;
+          state.simFrames += 1;
+          $("simFrameLabel").textContent = `${state.simFrames} frames`;
+          showFrame($("simFrame"), $("simEmpty"), "simUrl", event.data);
+          return;
+        }
+        handleJson(JSON.parse(event.data));
+      };
+    }
+
+    async function loadScenes() {
+      const response = await fetch("/api/scenes", {cache: "no-store"});
+      if (!response.ok) throw new Error(`Scene inventory failed: ${response.status}`);
+      state.scenes = await response.json();
+      populateTasks();
+      const defaultTask = state.scenes.default_task || "stack_blocks_three";
+      const defaultEpisode = Number(state.scenes.default_episode ?? 0);
+      selectScene(defaultTask, defaultEpisode, false);
+    }
+
+    function populateTasks() {
+      $("taskSelect").innerHTML = "";
+      for (const task of sceneTasks()) {
+        const option = document.createElement("option");
+        option.value = task.task;
+        option.textContent = task.label || task.task;
+        $("taskSelect").appendChild(option);
+      }
+    }
+
+    function populateEpisodes(task, preferredEpisode) {
+      $("episodeSelect").innerHTML = "";
+      const episodes = task.episodes || [];
+      for (const item of episodes) {
+        const option = document.createElement("option");
+        option.value = String(item.episode);
+        option.textContent = String(item.episode);
+        $("episodeSelect").appendChild(option);
+      }
+      const requested = Number(preferredEpisode);
+      const fallback = episodes[0] ? Number(episodes[0].episode) : "";
+      const selected = episodes.some((item) => Number(item.episode) === requested) ? requested : fallback;
+      if (selected !== "") {
+        $("episodeSelect").value = String(selected);
+      }
+    }
+
+    function selectScene(taskName, episode, restart) {
+      const task = sceneTasks().find((row) => row.task === taskName) || sceneTasks()[0];
+      if (!task) return;
+      $("taskSelect").value = task.task;
+      populateEpisodes(task, episode);
+      const item = selectedEpisodeData();
+      if (!item) return;
+      $("episodeId").textContent = item.episode_id;
+      $("frameId").value = item.default_frame ?? 0;
+      $("sceneInstruction").textContent = item.instruction || "No instruction available.";
+      if (restart) clearTelemetry();
+      updateReferenceVideo();
+      if (restart && state.sim && state.sim.readyState === WebSocket.OPEN) {
+        startSession();
+      }
+    }
+
+    function startSession() {
+      if ($("traceRows")) $("traceRows").innerHTML = "";
+      $("actionPreview").textContent = "Waiting for first action.";
+      $("evalOut").textContent = "No evaluation yet.";
+      clearFrames();
+      clearTelemetry();
+      setActiveArm("left", false);
+      const episode = selectedEpisodeData();
+      if (!episode) {
+        $("evalOut").textContent = "Scene inventory is not loaded.";
+        return;
+      }
+      state.clientSessionId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      state.requestedEpisodeId = episode.episode_id;
+      state.streamEpisodeId = null;
+      updateReferenceVideo();
+      seekReferenceToFrame();
+      send(state.sim, {
+        type: "start_session",
+        task: $("taskSelect").value,
+        episode: Number($("episodeSelect").value),
+        episode_id: episode.episode_id,
+        frame_id: Number($("frameId").value || 0),
+        client_session_id: state.clientSessionId,
+      });
+      state.started = true;
+    }
+
+    function setActiveArm(arm, clearCommand = true) {
+      state.activeArm = arm === "right" ? "right" : "left";
+      if (clearCommand) state.activeCommand = null;
+      armToggleButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.armToggle === state.activeArm);
+      });
+      $("activeArmOut").textContent = state.activeArm;
+      if (clearCommand) {
+        $("activeCommand").textContent = "-";
+        commandButtons.forEach((btn) => btn.classList.remove("active"));
+      }
+    }
+
+    function toggleActiveArm() {
+      setActiveArm(state.activeArm === "left" ? "right" : "left");
+    }
+
+    function setActiveControl(command) {
+      state.activeCommand = command;
+      commandButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.command === command);
+      });
+      $("activeCommand").textContent = `${state.activeArm} ${command}`;
+    }
+
+    function sendCommand(command) {
+      setActiveControl(command);
+      send(state.sim, {
+        type: "command",
+        arm: state.activeArm,
+        active_arm: state.activeArm,
+        command,
+        source: "button",
+        client_time_ms: Date.now(),
+      });
+    }
+
+    armToggleButtons.forEach((btn) => {
+      btn.addEventListener("click", () => setActiveArm(btn.dataset.armToggle));
+    });
+
+    commandButtons.forEach((btn) => {
+      btn.addEventListener("click", () => sendCommand(btn.dataset.command));
+    });
+
+    document.addEventListener("keydown", (event) => {
+      const tag = event.target && event.target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || event.repeat) return;
+      if (event.code === "Tab") {
+        event.preventDefault();
+        toggleActiveArm();
+        return;
+      }
+      if (event.code === "Digit1") {
+        event.preventDefault();
+        setActiveArm("left");
+        return;
+      }
+      if (event.code === "Digit2") {
+        event.preventDefault();
+        setActiveArm("right");
+        return;
+      }
+      const command = {
+        ArrowUp: "up", KeyW: "up",
+        ArrowDown: "down", KeyS: "down",
+        ArrowLeft: "left", KeyA: "left",
+        ArrowRight: "right", KeyD: "right",
+        KeyQ: "lift", KeyE: "delift",
+        KeyU: "roll_neg", KeyO: "roll_pos",
+        KeyI: "pitch_pos", KeyK: "pitch_neg",
+        KeyJ: "yaw_neg", KeyL: "yaw_pos",
+        KeyZ: "close", KeyX: "open",
+      }[event.code] || {
+        w: "up", s: "down", a: "left", d: "right",
+        q: "lift", e: "delift",
+        u: "roll_neg", o: "roll_pos",
+        i: "pitch_pos", k: "pitch_neg",
+        j: "yaw_neg", l: "yaw_pos",
+        z: "close", x: "open",
+      }[event.key];
+      if (!command) return;
+      event.preventDefault();
+      setActiveControl(command);
+      send(state.sim, {
+        type: "keydown",
+        code: event.code,
+        key: event.key,
+        arm: state.activeArm,
+        active_arm: state.activeArm,
+        client_time_ms: Date.now(),
+      });
+    });
+
+    document.addEventListener("keyup", () => {
+      state.activeCommand = null;
+      commandButtons.forEach((btn) => btn.classList.remove("active"));
+    });
+
+    $("startBtn").addEventListener("click", startSession);
+    $("resetBtn").addEventListener("click", startSession);
+    $("taskSelect").addEventListener("change", () => selectScene($("taskSelect").value, null, true));
+    $("episodeSelect").addEventListener("change", () => selectScene($("taskSelect").value, Number($("episodeSelect").value), true));
+    $("frameId").addEventListener("change", seekReferenceToFrame);
+    $("evalBtn").addEventListener("click", async () => {
+      const res = await fetch("/api/evaluate-trace", {method: "POST"});
+      const data = await res.json();
+      $("evalOut").textContent = JSON.stringify(data.summary || data, null, 2);
+    });
+    $("exportBtn").addEventListener("click", async () => {
+      const res = await fetch("/api/export-trace", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({finalize_video: true}),
+      });
+      const data = await res.json();
+      if ($("tracePath")) $("tracePath").innerHTML = linkFor(data.trace);
+      if ($("videoPath")) $("videoPath").innerHTML = linkFor(data.video);
+      $("evalOut").textContent = JSON.stringify({
+        saved: true,
+        sample: data.sample,
+        trace: data.trace,
+        video: data.video,
+        raw_video: data.raw_video,
+        first_frame: data.first_frame,
+        reference_video: data.manifest ? data.manifest.reference_video : undefined,
+        reference_start_time_sec: data.manifest ? data.manifest.reference_start_time_sec : undefined,
+        command_count: data.manifest ? (data.manifest.commands || []).length : undefined,
+        frames: data.manifest ? data.manifest.frames : undefined,
+        dataset_row: data.dataset_row,
+      }, null, 2);
+      setPill($("simStatus"), "sim saved", "good");
+    });
+
+    setActiveArm("left", false);
+
+    loadScenes()
+      .then(() => {
+        connectSim();
+      })
+      .catch((err) => {
+        setPill($("simStatus"), "sim scene error", "bad");
+        $("sceneInstruction").textContent = err.message || String(err);
+      });
+  </script>
+</body>
+</html>

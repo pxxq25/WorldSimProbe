@@ -1,0 +1,3 @@
+video:
+  fps: 10.0
+  fps_tolerance: 0.01

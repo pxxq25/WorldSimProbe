@@ -1,0 +1,9 @@
+task_id: task1
+name: Local Action Calibration
+metric: oracle_ratio_score_percent
+video_roles:
+  - original
+  - small
+  - large
+time_alignment: nearest_frame_common_timebase
+score_direction: higher_is_better

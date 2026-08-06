@@ -1,0 +1,6 @@
+cff-version: 1.2.0
+title: WorldSimProbe
+message: If you use WorldSimProbe, please cite the associated paper.
+authors:
+  - name: WorldSimProbe Contributors
+version: 0.1.0

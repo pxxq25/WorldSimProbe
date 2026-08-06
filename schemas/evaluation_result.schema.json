@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:worldsimprobe:schema:evaluation-result:1.0",
+  "title": "WorldSimProbe task result",
+  "type": "object",
+  "required": ["task_id", "summary", "rows", "errors"],
+  "properties": {
+    "task_id": {
+      "enum": ["task1", "task2", "task3", "task4", "task5"]
+    },
+    "summary": {"type": "object"},
+    "rows": {"type": "array", "items": {"type": "object"}},
+    "errors": {"type": "array", "items": {"type": "object"}}
+  }
+}
