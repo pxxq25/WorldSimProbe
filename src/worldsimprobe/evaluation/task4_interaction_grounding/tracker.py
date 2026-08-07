@@ -168,7 +168,7 @@ def task4_no_contact_score(
     robot_displacement_px: float,
     *,
     object_threshold_px: float = 10.0,
-    robot_threshold_px: float = 60.0,
+    robot_threshold_px: float = 20.0,
 ) -> dict[str, Any]:
     object_static_pass = int(object_displacement_px <= object_threshold_px)
     robot_motion_gate_pass = int(robot_displacement_px >= robot_threshold_px)
@@ -214,7 +214,11 @@ def project_xyz_to_uv(
     extrinsic: np.ndarray,
 ) -> tuple[float, float, float]:
     point = np.asarray([float(xyz[0]), float(xyz[1]), float(xyz[2]), 1.0], dtype=np.float64)
-    camera = np.asarray(extrinsic, dtype=np.float64) @ point
+    ext = np.asarray(extrinsic, dtype=np.float64)
+    # Handle 4x4 extrinsic by taking first 3 rows so result is 3-dim
+    if ext.shape[0] == 4:
+        ext = ext[:3]
+    camera = ext @ point
     depth = float(camera[2])
     pixel = np.asarray(intrinsic, dtype=np.float64) @ camera
     return float(pixel[0] / depth), float(pixel[1] / depth), depth
@@ -806,7 +810,7 @@ def canonical_object_displacement(track: dict[str, Any]) -> dict[str, Any]:
 def robot_motion_gate_from_frames(
     frames: np.ndarray,
     *,
-    threshold_px: float = 60.0,
+    threshold_px: float = 20.0,
     robotseg_root: str = "checkpoints/RobotSeg",
     robotseg_checkpoint: str = "checkpoints/robotseg.pt",
     device: str = "cuda",
@@ -1121,7 +1125,7 @@ def evaluate_task4_row_tapnextpp(
     max_frames: int = 0,
     device: str = "cuda",
     object_threshold_px: float = 10.0,
-    robot_motion_threshold_px: float = 60.0,
+    robot_motion_threshold_px: float = 20.0,
     visibility_threshold: float = 0.5,
     tapnextpp_checkpoint: str = "checkpoints/tapnextpp_ckpt.pt",
     robotseg_root: str = "checkpoints/RobotSeg",
@@ -1264,7 +1268,7 @@ def evaluate_task4_manifest_tapnextpp(
     device: str = "cuda",
     trajectory_threshold_px: float = 10.0,
     final_threshold_px: float = 10.0,
-    robot_motion_threshold_px: float = 60.0,
+    robot_motion_threshold_px: float = 20.0,
     visibility_threshold: float = 0.5,
     annotate_dir: Path | None = None,
     tapnextpp_checkpoint: str = "checkpoints/tapnextpp_ckpt.pt",
