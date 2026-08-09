@@ -375,7 +375,12 @@ def time_aligned_video_samples(
 def object_points(center_uv: tuple[float, float], radius: int, grid: int) -> np.ndarray:
     if grid <= 1:
         return np.asarray([[center_uv[0], center_uv[1]]], dtype=np.float32)
-    offsets = np.linspace(-radius, radius, grid, dtype=np.float32)
+    # Inscribe the Cartesian grid in the requested circular radius. Using
+    # [-radius, radius] on both axes puts corner queries at radius * sqrt(2).
+    # The small inward margin prevents float32 center-plus-offset rounding from
+    # placing a corner microscopically outside the requested radius.
+    extent = float(radius) / np.sqrt(2.0) * (1.0 - 1e-6)
+    offsets = np.linspace(-extent, extent, grid, dtype=np.float32)
     points = []
     for dy in offsets:
         for dx in offsets:
@@ -1237,6 +1242,7 @@ def evaluate_task4_row_tapnextpp(
             "evaluated_object_initial_uv": initial_uv[:2],
             "query_source": query_source or "projected_pose_grid",
             "query_count": int(tracks["target"]["query_count"]),
+            "query_grid_geometry": "true_radius_inscribed_square",
             "tracker": "tapnextpp",
             "tapnextpp_checkpoint": tapnextpp_checkpoint,
             "tracker_reliability": float(tracks["target"]["visible_fraction"]),
@@ -1384,6 +1390,9 @@ def evaluate_task4_manifest_tapnextpp(
             "tapnextpp_checkpoint": tapnextpp_checkpoint,
             "robot_motion_gate": "robotseg_centroid_three_frames",
             "robotseg_checkpoint": robotseg_checkpoint,
+            "point_radius_px_256": float(point_radius),
+            "point_grid": int(point_grid),
+            "point_grid_geometry": "true_radius_inscribed_square",
             "object_threshold_px_256": float(trajectory_threshold_px),
             "robot_motion_threshold_px_256": float(robot_motion_threshold_px),
             "allowed_subsets": list(allowed_subsets),

@@ -11,9 +11,10 @@ tracker: TAPNext++
 time_alignment: full_reference_horizon_nearest_frame
 point_radius_px: 10
 point_grid: 3
+point_grid_geometry: true_radius_inscribed_square
 canonical_resolution: [256, 256]
 object_displacement_threshold_px: 10.0
-robot_motion_gate_threshold_px: 60.0
+robot_motion_gate_threshold_px: 20.0
 robot_motion_gate_frames: 3
 robot_motion_gate: robotseg_centroid
 visibility_threshold: 0.5

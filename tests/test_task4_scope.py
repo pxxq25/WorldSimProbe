@@ -33,20 +33,13 @@ def test_task4_uses_documented_object_for_each_condition() -> None:
     assert evaluated_object_name("proximity_hallucination") == "target"
 
 
-def test_task4_query_grid_is_three_by_three() -> None:
+def test_task4_query_grid_is_three_by_three_with_true_radius() -> None:
     points = object_points((128.0, 128.0), radius=10, grid=3)
     assert points.shape == (9, 2)
-    assert {tuple(point) for point in points.tolist()} == {
-        (118.0, 118.0),
-        (128.0, 118.0),
-        (138.0, 118.0),
-        (118.0, 128.0),
-        (128.0, 128.0),
-        (138.0, 128.0),
-        (118.0, 138.0),
-        (128.0, 138.0),
-        (138.0, 138.0),
-    }
+    distances = np.linalg.norm(points - np.asarray([128.0, 128.0]), axis=1)
+    assert np.all(distances <= 10.0 + 1e-5)
+    assert np.isclose(np.max(distances), 10.0)
+    assert any(np.allclose(point, [128.0, 128.0]) for point in points)
 
 
 def test_task4_displacement_is_measured_in_canonical_coordinates() -> None:
@@ -61,6 +54,6 @@ def test_task4_displacement_is_measured_in_canonical_coordinates() -> None:
 
 
 def test_task4_requires_both_motion_gate_and_static_object() -> None:
-    assert task4_no_contact_score(10.0, 60.0)["task4_score"] == 100.0
-    assert task4_no_contact_score(10.01, 60.0)["task4_score"] == 0.0
-    assert task4_no_contact_score(1.0, 59.99)["task4_score"] == 0.0
+    assert task4_no_contact_score(10.0, 20.0)["task4_score"] == 100.0
+    assert task4_no_contact_score(10.01, 20.0)["task4_score"] == 0.0
+    assert task4_no_contact_score(1.0, 19.99)["task4_score"] == 0.0

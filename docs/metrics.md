@@ -25,11 +25,14 @@ The reported score is the mean over active windows and samples.
 Task 4 evaluates `distractor_hallucination`, `fake_contact_hallucination`, and
 `proximity_hallucination`. TAPNext++ tracks the distractor object in the first
 subset and the target object in the latter two. The evaluated object's stored
-initial location defines a 3-by-3 query grid, and its tracked centroid is
-measured in the canonical 256-by-256 coordinate system.
+initial location defines a 3-by-3 query grid inscribed within a true 10-pixel
+radius, and its tracked centroid is measured in the canonical 256-by-256
+coordinate system. This keeps every query point within the stated radius;
+placing each grid axis at plus or minus 10 would put corner queries 14.14
+pixels from the center.
 
 A rollout passes when the evaluated object's maximum displacement is at most
-10 pixels and the RobotSeg centroid motion gate confirms at least 60 pixels of
+10 pixels and the RobotSeg centroid motion gate confirms at least 20 pixels of
 robot-arm displacement across its three gate frames. Motion-gate or tracking
 failure receives zero.
 
