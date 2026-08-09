@@ -319,13 +319,16 @@ def robotseg_masked_gt_reference_flow_metrics(
 
     def eval_mask_for_window(
         ref_flow: np.ndarray, ref_mask: np.ndarray
-    ) -> tuple[np.ndarray, None, np.ndarray]:
+    ) -> tuple[np.ndarray, str | None, np.ndarray]:
         reference_mag = np.linalg.norm(ref_flow, axis=-1)
         active_reference_motion_mask = reference_mag > motion_threshold
         active_gt_robot_mask = ref_mask & active_reference_motion_mask
-        if not active_gt_robot_mask.any():
-            raise ValueError("empty active reference robot-motion mask")
-        return active_gt_robot_mask, None, active_gt_robot_mask
+        if active_gt_robot_mask.any():
+            return active_gt_robot_mask, None, active_gt_robot_mask
+        # Fallback: static robot mask without active-motion requirement
+        if ref_mask.any():
+            return ref_mask, "gt_robot_mask_no_active_motion", active_gt_robot_mask
+        raise ValueError("empty reference robot-motion mask")
 
     def score_window(start: int, end: int) -> dict[str, Any]:
         cand = candidate[start:end]
