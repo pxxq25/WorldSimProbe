@@ -169,7 +169,6 @@ It intentionally excludes:
 - evaluator-only simulator states, contacts, object annotations, and task labels;
 - internal provenance and non-public identifiers;
 - model checkpoints and generated benchmark predictions;
-- absolute paths from internal machines.
 
 Leaderboard submissions are joined with hidden references only on the evaluator.
 `scripts/check_public_release.py` enforces these release constraints.
