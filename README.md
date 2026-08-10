@@ -132,7 +132,8 @@ Task 5 uses a frozen VLM prompt and a shared 12-frame physical-time sampling
 protocol. Model scores do not use an additional GT-oracle filter.
 
 The Task 3 operator console, RoboTwin adapter, and trace-integrity gate are
-documented in [task3_teleoperation.md](docs/task3_teleoperation.md).
+documented in [task3_teleoperation.md](docs/task3_teleoperation.md). Synthetic
+human-like action profiles are not accepted as human teleoperation.
 
 ## 🤖 Simulator Resources
 
@@ -157,11 +158,16 @@ This public repository contains:
 - the Task 3 interface for collecting real human-control traces;
 - documentation for reproducing the public evaluation protocol.
 
+Initial context frames, instructions, action trajectories, public timing, and
+prediction horizons are distributed separately with the public evaluation
+inputs. The corresponding reference rollouts and evaluator-only metadata
+remain hidden.
+
 It intentionally excludes:
 
-- leaderboard test videos and initial frames;
-- hidden action streams and simulator trajectories;
-- private sample identities and annotations;
+- hidden reference videos and future ground-truth rollout frames;
+- evaluator-only simulator states, contacts, object annotations, and task labels;
+- internal provenance and non-public identifiers;
 - model checkpoints and generated benchmark predictions;
 - absolute paths from internal machines.
 
