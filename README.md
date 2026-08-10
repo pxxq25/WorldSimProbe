@@ -56,18 +56,29 @@ task definitions and scoring protocols.
 
 ## 🛠️ Installation
 
+WorldSimProbe requires Python 3.10 or newer. For participants who only need to
+validate and package submissions:
+
 ```bash
 git clone https://github.com/pxxq25/WorldSimProbe.git
 cd WorldSimProbe
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -e .
 ```
 
-Install optional evaluator dependencies only on leaderboard workers that run
-the corresponding tasks:
+Leaderboard workers can install the additional Python dependencies with:
 
 ```bash
 python -m pip install -e ".[flow,task4,task5]"
 ```
+
+This command installs the packaged Python dependencies; it does not download
+the evaluator models. Tasks 2-4 additionally require an NVIDIA CUDA worker,
+the pinned RobotSeg and TAPNext++ sources, and their checkpoints. Task 5 uses
+`Qwen/Qwen3-VL-8B-Instruct`. Follow
+[evaluator_setup.md](docs/evaluator_setup.md) for the complete worker setup,
+asset layout, and smoke test.
 
 Install the operator-console dependencies only when collecting real Task 3
 human-teleoperation traces:
@@ -169,6 +180,7 @@ It intentionally excludes:
 - evaluator-only simulator states, contacts, object annotations, and task labels;
 - internal provenance and non-public identifiers;
 - model checkpoints and generated benchmark predictions;
+- absolute paths from internal machines.
 
 Leaderboard submissions are joined with hidden references only on the evaluator.
 `scripts/check_public_release.py` enforces these release constraints.
