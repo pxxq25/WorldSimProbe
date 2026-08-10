@@ -30,7 +30,7 @@ dynamics across **RoboTwin**, **ManiSkill**, and **LIBERO**.
 
 <p align="center">
   <a href="https://evophys.com/WorldSimProbe/#diagnostic-suites">
-    <img src="https://evophys.com/WorldSimProbe/assets/images/operational-diagram.png" width="100%" alt="Operational overview of the five WorldSimProbe diagnostic tasks and evaluators">
+    <img src="operational-diagram.png" width="100%" alt="Operational overview of the five WorldSimProbe diagnostic tasks and evaluators">
   </a>
 </p>
 
