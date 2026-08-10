@@ -1,8 +1,5 @@
 # Evaluator Worker Setup
 
-This setup is only for trusted leaderboard workers. Participants validating or
-packaging submissions only need the base installation in the main README.
-
 ## Requirements
 
 - Linux with an NVIDIA GPU and a working CUDA toolchain;
