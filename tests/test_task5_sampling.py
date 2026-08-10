@@ -20,18 +20,28 @@ def test_physical_time_sampling_uses_full_reference_horizon() -> None:
     assert expected_duration == 1.0
 
 
-def test_physical_time_sampling_rejects_short_candidate() -> None:
+def test_physical_time_sampling_uses_shorter_common_horizon() -> None:
     frames = np.arange(6, dtype=np.uint8)[:, None, None, None]
     row = {"prediction_metadata": {"full_horizon_validation": {"expected_duration_sec": 1.0}}}
-    with pytest.raises(ValueError, match="shorter"):
-        _sample_physical_time(row, frames, decoded_fps=10.0, sample_count=12)
+    _, timestamps, indices, candidate_duration, expected_duration = _sample_physical_time(
+        row, frames, decoded_fps=10.0, sample_count=12
+    )
+    assert timestamps[-1] == 0.5
+    assert indices[-1] == 5
+    assert candidate_duration == 0.5
+    assert expected_duration == 1.0
 
 
-def test_physical_time_sampling_rejects_overlong_candidate() -> None:
+def test_physical_time_sampling_ignores_frames_beyond_expected_horizon() -> None:
     frames = np.arange(14, dtype=np.uint8)[:, None, None, None]
     row = {"prediction_metadata": {"full_horizon_validation": {"expected_duration_sec": 1.0}}}
-    with pytest.raises(ValueError, match="longer"):
-        _sample_physical_time(row, frames, decoded_fps=10.0, sample_count=12)
+    _, timestamps, indices, candidate_duration, expected_duration = _sample_physical_time(
+        row, frames, decoded_fps=10.0, sample_count=12
+    )
+    assert timestamps[-1] == 1.0
+    assert indices[-1] == 10
+    assert candidate_duration == 1.3
+    assert expected_duration == 1.0
 
 
 def test_task5_primary_accuracy_is_macro_averaged_by_primitive(tmp_path, monkeypatch) -> None:
