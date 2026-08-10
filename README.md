@@ -132,8 +132,7 @@ Task 5 uses a frozen VLM prompt and a shared 12-frame physical-time sampling
 protocol. Model scores do not use an additional GT-oracle filter.
 
 The Task 3 operator console, RoboTwin adapter, and trace-integrity gate are
-documented in [task3_teleoperation.md](docs/task3_teleoperation.md). Synthetic
-human-like action profiles are not accepted as human teleoperation.
+documented in [task3_teleoperation.md](docs/task3_teleoperation.md).
 
 ## 🤖 Simulator Resources
 
