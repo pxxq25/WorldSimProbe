@@ -22,7 +22,10 @@ dependencies = [
 [project.optional-dependencies]
 flow = [
   "h5py>=3.8",
+  "hydra-core==1.3.2",
   "opencv-python>=4.8",
+  "ptlflow==0.4.1",
+  "requests>=2.31",
   "torch>=2.1",
 ]
 task4 = [
@@ -33,7 +36,7 @@ task4 = [
 task5 = [
   "qwen-vl-utils>=0.0.14",
   "torch>=2.1",
-  "transformers>=4.57",
+  "transformers>=4.57,<5",
 ]
 teleoperation = [
   "h5py>=3.8",
@@ -41,8 +44,11 @@ teleoperation = [
   "transforms3d>=0.4",
 ]
 dev = [
+  "h5py>=3.8",
+  "opencv-python>=4.8",
   "pytest>=8.0",
   "ruff>=0.6",
+  "transforms3d>=0.4",
 ]
 
 [project.scripts]
