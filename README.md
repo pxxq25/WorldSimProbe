@@ -1,72 +1,105 @@
-# WorldSimProbe
+<h1 align="center">WorldSimProbe</h1>
 
-WorldSimProbe evaluates whether action-conditioned world models follow the
-supplied control stream and ground environment responses in the realized robot
-motion.
+<h3 align="center">
+Diagnosing Simulator Faithfulness in Action-Conditioned World Models for Embodied Manipulation
+</h3>
 
-This public repository contains:
+<p align="center"><em>A rollout can look right for the wrong reason.</em></p>
 
-- the Task 1-5 evaluation implementation;
-- the video submission contract and validator;
-- small, synthetic examples that demonstrate the file format;
-- documentation for preparing a leaderboard submission.
+<p align="center">
+  <a href="https://evophys.com/WorldSimProbe/"><img src="https://img.shields.io/badge/Project-Page-4c6ef5" alt="Project page"></a>
+  &nbsp;
+  <a href="https://evophys.com/WorldSimProbe/"><img src="https://img.shields.io/badge/Paper-PDF-b31b1b" alt="Paper PDF"></a>
+  &nbsp;
+  <a href="https://huggingface.co/datasets/petersonco/worldsimprobe_robotwin"><img src="https://img.shields.io/badge/Dataset-Hugging%20Face-ffcc4d" alt="Hugging Face dataset"></a>
+  &nbsp;
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2ea44f" alt="MIT License"></a>
+</p>
 
-It does not contain the leaderboard test set, hidden simulator references,
-training code, model checkpoints, or baseline-specific inference code.
+## 🔥 Overview
 
-## Tasks
+Action-conditioned world models can generate visually plausible rollouts while
+ignoring the supplied action trajectory, reverting to task-typical behavior,
+moving the wrong object, or hallucinating unsupported physical interactions.
 
-| Task | Name | Primary diagnostic |
+**WorldSimProbe** evaluates the causal chain from an action intervention to the
+robot motion and environment response realized in the generated video. Its five
+diagnostic tasks cover local action calibration, global trajectory coverage,
+action-source behavior preservation, interaction grounding, and interaction
+dynamics across **RoboTwin**, **ManiSkill**, and **LIBERO**.
+
+<p align="center">
+  <a href="https://evophys.com/WorldSimProbe/#diagnostic-suites">
+    <img src="https://evophys.com/WorldSimProbe/assets/images/operational-diagram.png" width="100%" alt="Operational overview of the five WorldSimProbe diagnostic tasks and evaluators">
+  </a>
+</p>
+
+<p align="center">
+  <em>Five probes reveal where the action-to-rollout causal chain fails.</em>
+</p>
+
+Explore interactive probes, aligned rollouts, and failure cases on the
+[project page](https://evophys.com/WorldSimProbe/).
+
+## 🎯 Five Diagnostic Tasks
+
+| Task | Diagnostic question | Evaluation |
 | --- | --- | --- |
-| 1 | Local Action Calibration | Local response to graded action changes |
-| 2 | Global Trajectory Coverage | Realization of cross-task donor actions |
-| 3 | Action-Source Behavior Preservation | Preservation of heterogeneous action sources |
-| 4 | Interaction Grounding | Target and distractor response under object binding |
-| 5 | Interaction Dynamics | Contact-conditioned primitive recognition |
+| **1. Local Action Calibration** | Does increasing an action perturbation produce the expected change in the rollout? | Simulator-calibrated response ratio |
+| **2. Global Trajectory Coverage** | Can the model realize a donor action outside the receiver task's typical behavior? | RobotSeg-masked reference-flow similarity |
+| **3. Action-Source Behavior Preservation** | Does the model preserve behavior from expert, policy, and human control sources? | RobotSeg-masked flow with source-level reporting |
+| **4. Interaction Grounding** | Does the correct object respond without unsupported distractor interaction? | TAPNext++ object tracking with robot-motion verification |
+| **5. Interaction Dynamics** | Does the rollout realize the intended physical interaction primitive? | Frozen VLM primitive classification |
 
-Task 4 evaluates distractor-object, fake-contact, and spatial-proximity
-settings. Task 3 includes an interactive RoboTwin operator console for
-collecting real human control traces; generated human-like action profiles are
-not part of that interface or the public Task 3 collection path.
+See [tasks.md](docs/tasks.md) and [metrics.md](docs/metrics.md) for the complete
+task definitions and scoring protocols.
 
-## Simulator Resources
-
-WorldSimProbe currently evaluates videos derived from three widely used
-simulators:
-
-- [RoboTwin](https://github.com/robotwin-Platform/RoboTwin)
-- [ManiSkill](https://github.com/mani-skill/ManiSkill)
-- [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO)
-
-These links are provided for users who want compatible training data or local
-simulator development. WorldSimProbe submissions contain generated videos, not
-simulator installations.
-
-## Installation
+## 🛠️ Installation
 
 ```bash
+git clone https://github.com/pxxq25/WorldSimProbe.git
+cd WorldSimProbe
 python -m pip install -e .
 ```
 
-Install optional evaluator dependencies only on the leaderboard worker that
-runs the corresponding task:
+Install optional evaluator dependencies only on leaderboard workers that run
+the corresponding tasks:
 
 ```bash
 python -m pip install -e ".[flow,task4,task5]"
 ```
 
-Install the operator-console dependencies only when collecting Task 3
-teleoperation traces:
+Install the operator-console dependencies only when collecting real Task 3
+human-teleoperation traces:
 
 ```bash
 python -m pip install -e ".[teleoperation]"
 ```
 
-## Submission
+## 🚀 Quick Start
 
-The leaderboard distributes model inputs separately from this repository.
-Hidden simulator references and annotations remain server-side. Run your model
-on the assigned inputs and submit:
+Validate a completed submission before upload:
+
+```bash
+worldsimprobe validate-submission \
+  --manifest submission/submission.jsonl \
+  --root submission \
+  --decode
+```
+
+Package the validated submission:
+
+```bash
+worldsimprobe package-submission \
+  --manifest submission/submission.jsonl \
+  --root submission \
+  --output worldsimprobe_submission.zip
+```
+
+## 📦 Submission Format
+
+The leaderboard distributes model inputs separately from this repository. Run
+the model on every assigned sample and submit:
 
 ```text
 submission/
@@ -77,54 +110,87 @@ submission/
 ```
 
 Each sample contains exactly one prediction. Task 1 requires `original`,
-`small`, and `large` videos, while Tasks 2-5 require one `candidate` video.
-Every candidate must cover the exact requested time horizon, subject only to
-one-frame timestamp rounding. Submitted videos use the evaluator-owned timing
-configuration, which defaults to 10 FPS; manifests cannot override timing.
+`small`, and `large` videos; Tasks 2-5 require one `candidate` video. Every
+video must cover the requested physical-time horizon, subject only to
+one-frame timestamp rounding.
 
-Validate before upload:
+Submitted videos use evaluator-owned timing, which defaults to 10 FPS.
+Participant manifests cannot override decoded video timing. See
+[submission.md](docs/submission.md) and [video_format.md](docs/video_format.md)
+for the complete JSONL and video contracts. Files under `examples/` are format
+examples only, not leaderboard test samples.
 
-```bash
-worldsimprobe validate-submission \
-  --manifest submission/submission.jsonl \
-  --root submission \
-  --decode
-```
+## 📐 Evaluation Protocol
 
-Create an archive:
+Leaderboard workers validate each submission, join it with a private reference
+manifest, and run the task-specific evaluator under `worldsimprobe.evaluation`.
+The public implementation exposes the metric logic; hidden rows provide the
+simulator references, actions, object metadata, task labels, and opaque sample
+identities required for scoring.
 
-```bash
-worldsimprobe package-submission \
-  --manifest submission/submission.jsonl \
-  --root submission \
-  --output worldsimprobe_submission.zip
-```
+Task 5 uses a frozen VLM prompt and a shared 12-frame physical-time sampling
+protocol. Model scores do not use an additional GT-oracle filter.
 
-See [submission.md](docs/submission.md) for the exact JSONL and video contract.
-The files under `examples/` are format examples only and are not leaderboard
-test samples.
+The Task 3 operator console, RoboTwin adapter, and trace-integrity gate are
+documented in [task3_teleoperation.md](docs/task3_teleoperation.md). Synthetic
+human-like action profiles are not accepted as human teleoperation.
 
-## Evaluation
+## 🤖 Simulator Resources
 
-Leaderboard workers join a submission with a private reference manifest, then
-run the task-specific evaluators in `worldsimprobe.evaluation`. The public
-implementation exposes all metric logic, while hidden rows provide only the
-reference videos, actions, object metadata, and opaque sample identifiers.
+WorldSimProbe currently evaluates videos derived from:
 
-Task 5 uses the frozen VLM prompt and the final 12-frame physical-time sampling
-protocol. No additional GT-oracle filtering is applied to model scores.
+- [RoboTwin](https://github.com/robotwin-Platform/RoboTwin)
+- [ManiSkill](https://github.com/mani-skill/ManiSkill)
+- [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO)
 
-The Task 3 operator console, its RoboTwin adapter, and the trace-integrity gate
-are documented in [task3_teleoperation.md](docs/task3_teleoperation.md).
+These upstream projects are linked for compatible training-data and simulator
+development. WorldSimProbe submissions contain generated videos, not simulator
+installations. Additional setup notes are available in
+[simulator_resources.md](docs/simulator_resources.md).
 
-## Data Privacy
+## 🔐 Public Release and Hidden References
 
-The repository intentionally excludes:
+This public repository contains:
 
-- benchmark test videos and initial frames;
+- the Task 1-5 evaluation implementations;
+- the video submission validator and packaging tools;
+- small synthetic examples demonstrating the public formats;
+- the Task 3 interface for collecting real human-control traces;
+- documentation for reproducing the public evaluation protocol.
+
+It intentionally excludes:
+
+- leaderboard test videos and initial frames;
 - hidden action streams and simulator trajectories;
-- private sample IDs and annotations;
-- absolute paths from internal machines;
-- model checkpoints and generated benchmark predictions.
+- private sample identities and annotations;
+- model checkpoints and generated benchmark predictions;
+- absolute paths from internal machines.
 
-`scripts/check_public_release.py` enforces these constraints before release.
+Leaderboard submissions are joined with hidden references only on the evaluator.
+`scripts/check_public_release.py` enforces these release constraints.
+
+## 📁 Repository Structure
+
+```text
+WorldSimProbe/
+├── configs/evaluation/       # Frozen task protocols
+├── src/worldsimprobe/
+│   ├── evaluation/           # Task 1-5 evaluators
+│   ├── submission/           # Validation and packaging
+│   └── common/               # Shared timing and metric utilities
+├── scripts/                  # Evaluator and utility entry points
+├── schemas/                  # Submission and result schemas
+├── examples/                 # Synthetic format examples
+├── docs/                     # Detailed protocols
+└── tests/                    # Contract and metric tests
+```
+
+## 📑 Citation
+
+If you use WorldSimProbe, please cite the accompanying paper available from the
+[project page](https://evophys.com/WorldSimProbe/). Citation metadata is
+provided in [CITATION.cff](CITATION.cff).
+
+## 📄 License
+
+WorldSimProbe is released under the [MIT License](LICENSE).
