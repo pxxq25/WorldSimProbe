@@ -3,14 +3,33 @@ from __future__ import annotations
 import importlib
 import math
 import os
+from functools import lru_cache
 
 import numpy as np
 import transforms3d as t3d
 import yaml
 
-from envs import CONFIGS_PATH  # type: ignore[import-not-found]  # noqa: E402
-from test_render import Sapien_TEST  # noqa: E402
-from script.annotate_official_contacts import tolerate_official_seed_instability  # noqa: E402
+
+def _missing_robotwin_dependency(exc: ModuleNotFoundError) -> RuntimeError:
+    return RuntimeError(
+        "RoboTwin runtime modules are unavailable. Launch the operator with an "
+        "official RoboTwin checkout configured through --robotwin-root."
+    )
+
+
+@lru_cache(maxsize=1)
+def _robotwin_runtime():
+    try:
+        envs_module = importlib.import_module("envs")
+        test_render_module = importlib.import_module("test_render")
+        contacts_module = importlib.import_module("script.annotate_official_contacts")
+    except ModuleNotFoundError as exc:
+        raise _missing_robotwin_dependency(exc) from exc
+    return (
+        envs_module.CONFIGS_PATH,
+        test_render_module.Sapien_TEST,
+        contacts_module.tolerate_official_seed_instability,
+    )
 
 
 def class_decorator(task_name):
@@ -29,6 +48,7 @@ def get_embodiment_config(robot_file):
 
 
 def load_task_args(task_name, task_config, render_freq=0):
+    configs_path, _, _ = _robotwin_runtime()
     with open(f"./task_config/{task_config}.yml", "r", encoding="utf-8") as handle:
         args = yaml.load(handle.read(), Loader=yaml.FullLoader)
 
@@ -36,7 +56,7 @@ def load_task_args(task_name, task_config, render_freq=0):
     args["task_config"] = task_config
     embodiment_type = args.get("embodiment")
     with open(
-        os.path.join(CONFIGS_PATH, "_embodiment_config.yml"),
+        os.path.join(configs_path, "_embodiment_config.yml"),
         "r",
         encoding="utf-8",
     ) as handle:
@@ -107,8 +127,9 @@ def _quat_roll(q, angle_rad):
 
 class LeftCameraTeleopAdapter:
     def __init__(self, task_config, planar_step, vertical_step, rotate_deg, lateral_step_mult):
-        Sapien_TEST()
-        tolerate_official_seed_instability()
+        _, sapien_test, tolerate_seed_instability = _robotwin_runtime()
+        sapien_test()
+        tolerate_seed_instability()
         self.task_config = task_config
         self.planar_step = float(planar_step)
         self.vertical_step = float(vertical_step)
