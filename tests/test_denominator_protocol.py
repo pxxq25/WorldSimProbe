@@ -161,16 +161,17 @@ def test_rmfa_aggregates_one_score_per_sample(monkeypatch, tmp_path: Path) -> No
     assert result["summary"]["mean_window_gt_robot_flow_score_0_to_100"] == 50.0
 
 
-def test_rmfa_rejects_empty_active_reference_robot_mask() -> None:
+def test_rmfa_falls_back_to_static_robot_mask_without_active_motion() -> None:
     candidate = np.zeros((2, 4, 4, 2), dtype=np.float32)
     reference = np.zeros_like(candidate)
     robot_mask = np.ones((2, 4, 4), dtype=bool)
-    with pytest.raises(ValueError, match="empty active reference robot-motion mask"):
-        robotseg_flow.robotseg_masked_gt_reference_flow_metrics(
-            candidate,
-            reference,
-            robot_mask,
-        )
+    result = robotseg_flow.robotseg_masked_gt_reference_flow_metrics(
+        candidate,
+        reference,
+        robot_mask,
+    )
+    assert result["mask_fallback"] == "gt_robot_mask_no_active_motion"
+    assert result["gt_robot_flow_score_0_to_100"] == 100.0
 
 
 def test_task4_evaluator_failure_remains_in_denominator(monkeypatch, tmp_path: Path) -> None:
