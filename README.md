@@ -48,7 +48,7 @@ Explore interactive probes, aligned rollouts, and failure cases on the
 | **1. Local Action Calibration** | Does increasing an action perturbation produce the expected change in the rollout? | Simulator-calibrated response ratio |
 | **2. Global Trajectory Coverage** | Can the model realize a donor action outside the receiver task's typical behavior? | RobotSeg-masked reference-flow similarity |
 | **3. Action-Source Behavior Preservation** | Does the model preserve behavior from expert, policy, and human control sources? | RobotSeg-masked flow with source-level reporting |
-| **4. Interaction Grounding** | Does the correct object respond without unsupported distractor interaction? | TAPNext++ object tracking with robot-motion verification |
+| **4. Interaction Grounding** | Does the rollout avoid hallucinating object interaction when the commanded action should not produce contact? | TAPNext++ object tracking with robot-motion verification |
 | **5. Interaction Dynamics** | Does the rollout realize the intended physical interaction primitive? | Frozen VLM primitive classification |
 
 See [tasks.md](docs/tasks.md) and [metrics.md](docs/metrics.md) for the complete
