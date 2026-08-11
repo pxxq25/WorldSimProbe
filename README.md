@@ -11,7 +11,7 @@ Diagnosing Simulator Faithfulness in Action-Conditioned World Models for Embodie
   &nbsp;
   <a href="https://evophys.com/WorldSimProbe/"><img src="https://img.shields.io/badge/Paper-PDF-b31b1b" alt="Paper PDF"></a>
   &nbsp;
-  <a href="https://huggingface.co/datasets/petersonco/worldsimprobe_robotwin"><img src="https://img.shields.io/badge/Dataset-Hugging%20Face-ffcc4d" alt="Hugging Face dataset"></a>
+  <a href="https://huggingface.co/datasets/petersonco/worldsimprobe"><img src="https://img.shields.io/badge/Dataset-Hugging%20Face-ffcc4d" alt="Hugging Face dataset"></a>
   &nbsp;
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2ea44f" alt="MIT License"></a>
 </p>
@@ -109,8 +109,11 @@ worldsimprobe package-submission \
 
 ## 📦 Submission Format
 
-The leaderboard distributes model inputs separately from this repository. Run
-the model on every assigned sample and submit:
+Download the public inference inputs from the
+[WorldSimProbe dataset on Hugging Face](https://huggingface.co/datasets/petersonco/worldsimprobe).
+Each released backend package contains its public manifest, initial-context
+images, action trajectories, schema, and generation contract. Run the model on
+every sample and prepare:
 
 ```text
 submission/
@@ -129,12 +132,18 @@ Submitted videos use evaluator-owned timing, which defaults to 10 FPS.
 Participant manifests cannot override decoded video timing. See
 [submission.md](docs/submission.md) and [video_format.md](docs/video_format.md)
 for the complete JSONL and video contracts. Files under `examples/` are format
-examples only, not leaderboard test samples.
+examples only, not public evaluation samples.
+
+After validation, package the submission as `worldsimprobe_submission.zip`,
+upload it to Google Drive, and enable viewer access for anyone with the link.
+Email the shareable Google Drive link to
+[anjunieco@gmail.com](mailto:anjunieco@gmail.com).
 
 ## 📐 Evaluation Protocol
 
-Leaderboard workers validate each submission, join it with a private reference
-manifest, and run the task-specific evaluator under `worldsimprobe.evaluation`.
+The evaluation maintainers validate each submission, join it with a private
+reference manifest, and run the task-specific evaluator under
+`worldsimprobe.evaluation`.
 The public implementation exposes the metric logic; hidden rows provide the
 simulator references, actions, object metadata, task labels, and opaque sample
 identities required for scoring.
@@ -182,7 +191,7 @@ It intentionally excludes:
 - model checkpoints and generated benchmark predictions;
 - absolute paths from internal machines.
 
-Leaderboard submissions are joined with hidden references only on the evaluator.
+Submissions are joined with hidden references only on the official evaluator.
 `scripts/check_public_release.py` enforces these release constraints.
 
 ## 📁 Repository Structure
