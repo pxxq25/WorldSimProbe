@@ -7,5 +7,5 @@ projects for installation, assets, demonstrations, and licensing terms:
 - ManiSkill: https://github.com/mani-skill/ManiSkill
 - LIBERO: https://github.com/Lifelong-Robot-Learning/LIBERO
 
-The leaderboard submission is simulator-independent. Participants submit model
-generated videos in the common WorldSimProbe format.
+The submission is simulator-independent. Participants submit model-generated
+videos in the common WorldSimProbe format.
