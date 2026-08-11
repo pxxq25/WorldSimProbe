@@ -14,7 +14,7 @@
 Models may generate native chunks internally, but the submitted candidate must
 cover the complete timeline assigned to the sample. Early termination, repeated
 short chunks, or a single frame held for the missing horizon fail validation on
-the leaderboard.
+the official evaluator.
 
 Submission manifests cannot override frame rate or timestamps. Validation
 decodes the media and compares its frame rate with the evaluator configuration.
