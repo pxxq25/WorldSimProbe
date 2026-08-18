@@ -41,6 +41,17 @@ dynamics across **RoboTwin**, **ManiSkill**, and **LIBERO**.
 Explore interactive probes, aligned rollouts, and failure cases on the
 [project page](https://evophys.com/WorldSimProbe/).
 
+## 💬 Community
+
+Join the **WorldSimProbe WeChat group** for benchmark updates, submission
+questions, and community discussion.
+
+<p align="center">
+  <img src="assets/community/wechat-group-qr.jpg" width="280" alt="QR code for the WorldSimProbe WeChat group">
+</p>
+
+<p align="center"><sub>WeChat invitation QR codes are time-limited; this image will be refreshed when a new code is issued.</sub></p>
+
 ## 🎯 Five Diagnostic Tasks
 
 | Task | Diagnostic question | Evaluation |
