@@ -46,6 +46,9 @@ Explore interactive probes, aligned rollouts, and failure cases on the
 Join the **WorldSimProbe WeChat group** for benchmark updates, submission
 questions, and community discussion.
 
+For benchmark, submission, or evaluation questions, email
+[worldsimprobe@outlook.com](mailto:worldsimprobe@outlook.com).
+
 <p align="center">
   <img src="assets/community/wechat-group-qr.jpg" width="280" alt="QR code for the WorldSimProbe WeChat group">
 </p>
