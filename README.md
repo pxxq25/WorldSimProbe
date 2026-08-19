@@ -41,6 +41,19 @@ dynamics across **RoboTwin**, **ManiSkill**, and **LIBERO**.
 Explore interactive probes, aligned rollouts, and failure cases on the
 [project page](https://evophys.com/WorldSimProbe/).
 
+## 🗞️ News
+
+- **`2026-08-10`**: 🤗 Released the public **RoboTwin** and **LIBERO** test sets on [Hugging Face](https://huggingface.co/datasets/petersonco/worldsimprobe).
+- **`2026-08-06`**: 🔥 Released the complete **Task 1-5 evaluation code** and submission toolkit.
+
+## 🎯 TODO
+
+- [x] Release the Task 1-5 evaluation code and submission toolkit.
+- [x] Release the public RoboTwin and LIBERO test sets.
+- [ ] Release the validation set *(ETA: 1 week)*.
+- [ ] Launch the public leaderboard *(ETA: 1 week)*.
+- [ ] Release the generation pipeline *(ETA: 1-2 months)*.
+
 ## 💬 Community
 
 Join the **WorldSimProbe WeChat group** for benchmark updates, submission
