@@ -49,7 +49,7 @@ Explore interactive probes, aligned rollouts, and failure cases on the
 ## 🎯 TODO
 
 - [x] Release the Task 1-5 evaluation code and submission toolkit.
-- [x] Release the public RoboTwin and LIBERO test sets.
+- [x] Release the public test sets.
 - [ ] Release the validation set *(ETA: 1 week)*.
 - [ ] Launch the public leaderboard *(ETA: 1 week)*.
 - [ ] Release the generation pipeline *(ETA: 1-2 months)*.
