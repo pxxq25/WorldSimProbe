@@ -13,6 +13,8 @@ Diagnosing Simulator Faithfulness in Action-Conditioned World Models for Embodie
   &nbsp;
   <a href="https://huggingface.co/datasets/petersonco/worldsimprobe"><img src="https://img.shields.io/badge/Dataset-Hugging%20Face-ffcc4d" alt="Hugging Face dataset"></a>
   &nbsp;
+  <a href="https://huggingface.co/datasets/petersonco/worldsimprobe_validation"><img src="https://img.shields.io/badge/Validation-Hugging%20Face-ffd21e" alt="Hugging Face validation set"></a>
+  &nbsp;
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2ea44f" alt="MIT License"></a>
 </p>
 
