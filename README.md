@@ -43,14 +43,15 @@ Explore interactive probes, aligned rollouts, and failure cases on the
 
 ## 🗞️ News
 
+- **`2026-08-20`**: 🤗 Released the **WorldSimProbe validation set**, including reference videos for internal evaluator testing, on [Hugging Face](https://huggingface.co/datasets/petersonco/worldsimprobe_validation).
 - **`2026-08-10`**: 🤗 Released the public **RoboTwin** and **LIBERO** test sets on [Hugging Face](https://huggingface.co/datasets/petersonco/worldsimprobe).
 - **`2026-08-06`**: 🔥 Released the complete **Task 1-5 evaluation code** and submission toolkit.
 
 ## 🎯 TODO
 
 - [x] Release the Task 1-5 evaluation code and submission toolkit.
-- [x] Release the public test sets.
-- [ ] Release the validation set *(ETA: 1 week)*.
+- [x] Release the public RoboTwin and LIBERO test sets.
+- [x] Release the validation set with reference videos for internal evaluator testing.
 - [ ] Launch the public leaderboard *(ETA: 1 week)*.
 - [ ] Release the generation pipeline *(ETA: 1-2 months)*.
 
@@ -209,6 +210,11 @@ Initial context frames, instructions, action trajectories, public timing, and
 prediction horizons are distributed separately with the public evaluation
 inputs. The corresponding reference rollouts and evaluator-only metadata
 remain hidden.
+
+For local evaluator and integration testing, we separately release the
+[WorldSimProbe validation set](https://huggingface.co/datasets/petersonco/worldsimprobe_validation),
+which includes its reference videos. These validation references are distinct
+from the hidden references used to score the public test set.
 
 It intentionally excludes:
 
