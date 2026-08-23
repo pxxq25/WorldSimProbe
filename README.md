@@ -46,7 +46,7 @@ Explore interactive probes, aligned rollouts, and failure cases on the
 ## 🗞️ News
 
 - **`2026-08-20`**: 🤗 Released the **WorldSimProbe validation set**, including reference videos for internal evaluator testing, on [Hugging Face](https://huggingface.co/datasets/petersonco/worldsimprobe_validation).
-- **`2026-08-10`**: 🤗 Released the public **RoboTwin** and **LIBERO** test sets on [Hugging Face](https://huggingface.co/datasets/petersonco/worldsimprobe).
+- **`2026-08-10`**: 🤗 Released the public **RoboTwin**,**Maniskill** and **LIBERO** test sets on [Hugging Face](https://huggingface.co/datasets/petersonco/worldsimprobe).
 - **`2026-08-06`**: 🔥 Released the complete **Task 1-5 evaluation code** and submission toolkit.
 
 ## 🎯 TODO
