@@ -66,7 +66,7 @@ For benchmark, submission, or evaluation questions, email
 [worldsimprobe@outlook.com](mailto:worldsimprobe@outlook.com).
 
 <p align="center">
-  <img src="assets/community/wechat-group-qr.jpg" width="280" alt="QR code for the WorldSimProbe WeChat group">
+  <img src="assets/community/图片_20260902163323_7_100.jpg" width="280" alt="QR code for the WorldSimProbe WeChat group">
 </p>
 
 <p align="center"><sub>WeChat invitation QR codes are time-limited; this image will be refreshed when a new code is issued.</sub></p>
