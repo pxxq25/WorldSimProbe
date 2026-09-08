@@ -831,6 +831,14 @@ def evaluate_task5_manifest_qwen3_vl_vqa(
         count = stats["n"]
         stats["primitive_accuracy"] = stats["primitive_matches"] / count if count else 0.0
     macro_primitive_accuracy = float(np.mean(primitive_rates)) if primitive_rates else 0.0
+    forced_choice_primitive_accuracy = forced_choice_primitive_matches / n if n else 0.0
+    primary_metric = str(config.get("metric", "forced_choice_primitive_accuracy_0_to_100"))
+    if primary_metric == "forced_choice_primitive_accuracy_0_to_100":
+        primary_score = forced_choice_primitive_accuracy
+    elif primary_metric == "primitive_accuracy_0_to_100":
+        primary_score = macro_primitive_accuracy
+    else:
+        raise ValueError(f"Unsupported Task 5 metric: {primary_metric}")
 
     return json_safe(
         {
@@ -846,10 +854,17 @@ def evaluate_task5_manifest_qwen3_vl_vqa(
             "rows_scored": n,
             "errors": errors,
             "summary": {
+                "primary_metric": primary_metric,
+                "primary_score_fraction": primary_score,
+                "primary_score": 100.0 * primary_score,
+                "primary_score_0_to_100": 100.0 * primary_score,
                 "primitive_accuracy": macro_primitive_accuracy,
                 "primitive_accuracy_0_to_100": 100.0 * macro_primitive_accuracy,
                 "primitive_accuracy_micro": primitive_matches / n if n else 0.0,
-                "forced_choice_primitive_accuracy": forced_choice_primitive_matches / n if n else 0.0,
+                "forced_choice_primitive_accuracy": forced_choice_primitive_accuracy,
+                "forced_choice_primitive_accuracy_0_to_100": (
+                    100.0 * forced_choice_primitive_accuracy
+                ),
                 "agent_motion_match_rate": agent_motion_matches / n if n else 0.0,
                 "object_motion_match_rate": object_motion_matches / n if n else 0.0,
                 "motion_gate_match_rate": motion_gate_matches / n if n else 0.0,

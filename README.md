@@ -179,7 +179,10 @@ simulator references, actions, object metadata, task labels, and opaque sample
 identities required for scoring.
 
 Task 5 uses a frozen VLM prompt and a shared 12-frame physical-time sampling
-protocol. Model scores do not use an additional GT-oracle filter.
+protocol. Its primary score is ungated forced-choice primitive accuracy. Agent
+motion, object motion, interaction visibility, and integrity gates remain in the
+output as diagnostics and do not alter the primary score. Model scores do not
+use an additional GT-oracle filter.
 
 The Task 3 operator console, RoboTwin adapter, and trace-integrity gate are
 documented in [task3_teleoperation.md](docs/task3_teleoperation.md). Synthetic

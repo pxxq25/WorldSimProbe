@@ -1,6 +1,7 @@
 task_id: task5
 name: Interaction Dynamics
-metric: primitive_accuracy_0_to_100
+metric: forced_choice_primitive_accuracy_0_to_100
+motion_gate: diagnostic_only
 video_roles:
   - candidate
 sample_count: 12

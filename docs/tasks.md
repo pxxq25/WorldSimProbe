@@ -35,5 +35,7 @@ score measures whether unsupported environment interaction remains absent.
 A VLM classifies the realized interaction as one of eight primitives:
 `push`, `rotate`, `slide_drag`, `pull`, `tap`, `shake`, `drop`, or
 `knock_over`. Candidate clips use 12 samples on a shared physical-time grid.
-The primitive decision is gated by agent-motion and object-motion agreement.
-Leaderboard model scores do not use an additional GT-oracle filter.
+The leaderboard score is ungated forced-choice primitive accuracy. Separate
+agent-motion, object-motion, visibility, and integrity checks are retained as
+diagnostics and do not alter the leaderboard score. Leaderboard model scores do
+not use an additional GT-oracle filter.
