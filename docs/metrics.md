@@ -40,6 +40,5 @@ failure receives zero.
 
 The VLM performs an eight-way forced choice and separately verifies agent
 motion, object motion, interaction visibility, visual integrity, and physical
-plausibility. The principal score is the ungated forced-choice primitive
-accuracy. Motion-gated primitive accuracy, the final computed pass rate,
-per-primitive scores, and the confusion matrix are also reported as diagnostics.
+plausibility. The principal score is primitive accuracy after the two motion
+checks. Per-primitive scores and the confusion matrix are also reported.

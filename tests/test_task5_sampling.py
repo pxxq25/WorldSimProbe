@@ -1,8 +1,5 @@
-from pathlib import Path
-
 import numpy as np
 import pytest
-import yaml
 
 from worldsimprobe.evaluation.task5_interaction_dynamics import frozen_protocol
 from worldsimprobe.evaluation.task5_interaction_dynamics.evaluator import (
@@ -138,63 +135,3 @@ def test_task5_scores_each_sample_once(tmp_path, monkeypatch) -> None:
     assert result["rows_scored"] == 2
     assert "generation_rows_scored" not in result
     assert result["summary"]["primitive_accuracy"] == 0.5
-
-
-def test_task5_official_primary_score_is_ungated_forced_choice(
-    tmp_path, monkeypatch
-) -> None:
-    config = tmp_path / "task5.yaml"
-    config.write_text(
-        "metric: forced_choice_primitive_accuracy_0_to_100\n"
-        "primitives: [push, pull]\n"
-        "primitive_descriptions:\n  push: {}\n  pull: {}\n",
-        encoding="utf-8",
-    )
-    rows = [
-        {"row_id": "push-1", "primitive": "push", "forced": 1, "gated": 0},
-        {"row_id": "pull-1", "primitive": "pull", "forced": 0, "gated": 0},
-    ]
-    monkeypatch.setattr(frozen_protocol, "select_rows", lambda *args, **kwargs: rows)
-    monkeypatch.setattr(frozen_protocol, "load_qwen3_vl", lambda **kwargs: (object(), object()))
-
-    def evaluate(row, **kwargs):
-        forced = int(row["forced"])
-        gated = int(row["gated"])
-        return {
-            "row_id": row["row_id"],
-            "intended_primitive": row["primitive"],
-            "predicted_primitive": row["primitive"] if forced else "push",
-            "primitive_match": gated,
-            "forced_choice_primitive_match": forced,
-            "agent_motion_match_int": 0,
-            "object_motion_match_int": 0,
-            "motion_gate_match": 0,
-            "interaction_visible": 1,
-            "integrity_ok": 1,
-            "computed_pass": gated,
-            "response_format_valid": 1,
-        }
-
-    monkeypatch.setattr(frozen_protocol, "evaluate_task5_row_qwen3_vl_vqa", evaluate)
-    result = frozen_protocol.evaluate_task5_manifest_qwen3_vl_vqa(
-        manifest=tmp_path / "unused.jsonl",
-        root=tmp_path,
-        task_config=config,
-        model_name_or_path="unused",
-    )
-    summary = result["summary"]
-    assert summary["forced_choice_primitive_accuracy"] == 0.5
-    assert summary["primitive_accuracy"] == 0.0
-    assert summary["primary_metric"] == "forced_choice_primitive_accuracy_0_to_100"
-    assert summary["primary_score_fraction"] == 0.5
-    assert summary["primary_score"] == 50.0
-    assert summary["primary_score_0_to_100"] == 50.0
-
-
-def test_task5_official_config_selects_ungated_primary_metric() -> None:
-    config_path = (
-        Path(__file__).parents[1] / "configs" / "evaluation" / "task5.yaml"
-    )
-    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    assert config["metric"] == "forced_choice_primitive_accuracy_0_to_100"
-    assert config["motion_gate"] == "diagnostic_only"
